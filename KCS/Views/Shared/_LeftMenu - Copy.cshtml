@@ -1,0 +1,211 @@
+﻿@*
+    This partial controls the left menu of the AdminLTE dashboard and is called automatically by _AdminLteLayout
+       This is where you can add, modify, or remove navigation options in your app
+       TODO: This preserves the links as-is for the demo, which lead to broken pages!
+       It's up to you to make sure these links either get deleted or lead somewhere REAL!
+*@
+
+@using KCS.DTOs
+@{
+    Layout = null;
+}
+<aside class="main-sidebar">
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+        <!-- Sidebar user panel -->
+        <div class="user-panel">
+            <div class="pull-left image">
+                @if (ViewBag.UserInformation.ProfilePicture != null)
+                {
+                    var base64 = Convert.ToBase64String(ViewBag.UserInformation.ProfilePicture);
+                    var UserProfileImage = string.Format("data:image/jpg;base64,{0}", base64);
+
+                    <img src="@UserProfileImage" class="img-circle" alt="User Image" />
+                }
+                else
+                {
+                    <img src="~/Content/Image/default-image.png" class="img-circle" alt="User Image" />
+                }
+
+            </div>
+            <div class="pull-left info">
+                <p>@ViewBag.UserInformation.Name</p>
+
+            </div>
+        </div>
+
+        <!-- sidebar menu: : style can be found in sidebar.less -->
+        <ul class="sidebar-menu">
+            <li class="header">MAIN NAVIGATION</li>
+
+            <li>
+                <a href="@Url.Action("Index","Home")">
+                    <i class="fa fa-dashboard"></i> <span>Dashboard</span>
+                </a>
+            </li>
+
+            @{
+                List<MenuRoleMapperDTO> UserRights = ViewBag.UserRights;
+            }
+
+            <!-- Section for render all menu which have child menu -->
+            @if (ViewBag.ParentMenuRights != null)
+            {
+                foreach (MenuRoleMapperDTO menuRoleMapperDTO in ViewBag.ParentMenuRights)
+                {
+                    if (menuRoleMapperDTO.IsView == true)
+                    {
+
+                        if (ViewBag.CurrentPageRights != null && UserRights.Where(x => x.MenuText == ViewBag.CurrentPageRights.MenuText && x.ParentMenuId == menuRoleMapperDTO.MenuId).Count() > 0)
+                        {
+                            /* If menu is requested menu than add active class */
+                            <li class="treeview active">
+                                <a href="#">
+                                    <i class="@menuRoleMapperDTO.MenuIcon"></i>
+                                    <span>@menuRoleMapperDTO.MenuText</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                @if (ViewBag.UserRights != null)
+                                {
+                                    @RenderChildMenu(ViewBag.UserRights, menuRoleMapperDTO.MenuId);
+                                }
+                            </li>
+                            /* If menu is requested menu than add active class */
+                        }
+                        else
+                        {
+                            <li class="treeview">
+                                <a href="#">
+                                    <i class="@menuRoleMapperDTO.MenuIcon"></i>
+                                    <span>@menuRoleMapperDTO.MenuText</span>
+                                    <span class="pull-right-container">
+                                        <i class="fa fa-angle-left pull-right"></i>
+                                    </span>
+                                </a>
+                                @if (ViewBag.UserRights != null)
+                                {
+                                    @RenderChildMenu(ViewBag.UserRights, menuRoleMapperDTO.MenuId);
+                                }
+                            </li>
+                        }
+                    }
+                }
+            }
+            <!-- Section for render all menu which have child menu -->
+
+            @if (ViewBag.UserRights != null)
+            {
+
+                foreach (MenuRoleMapperDTO menuRoleMapperDTO in UserRights.Where(x => x.ParentMenuId == null))
+                {
+                    if (ViewBag.CurrentPageRights != null && ViewBag.CurrentPageRights.MenuText == menuRoleMapperDTO.MenuText)
+                    {
+                        <li class="active">
+                            <a href="@menuRoleMapperDTO.MenuTargetPage">
+                                <i class="@menuRoleMapperDTO.MenuIcon"></i>@menuRoleMapperDTO.MenuText
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li>
+                            <a href="@menuRoleMapperDTO.MenuTargetPage">
+                                <i class="@menuRoleMapperDTO.MenuIcon"></i>@menuRoleMapperDTO.MenuText
+                            </a>
+                        </li>
+                    }
+                }
+            }
+
+            @*<li class="treeview">
+                <a href="#">
+                    <i class="fa fa-pie-chart"></i>
+                    <span>Charts</span>
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                </a>
+                <ul class="treeview-menu">
+                    <li><a href="pages/charts/chartjs.html"><i class="fa fa-circle-o"></i> ChartJS</a></li>
+                    <li><a href="pages/charts/morris.html"><i class="fa fa-circle-o"></i> Morris</a></li>
+                    <li><a href="pages/charts/flot.html"><i class="fa fa-circle-o"></i> Flot</a></li>
+                    <li><a href="pages/charts/inline.html"><i class="fa fa-circle-o"></i> Inline charts</a></li>
+                </ul>
+            </li>
+
+        <li>
+            <a href="@Url.Action("Index","User")">
+                <i class="fa fa-user"></i> <span>User</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="Role">
+                <i class="fa fa-check"></i> <span>Role</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="@Url.Action("Index","Menu")">
+                <i class="fa fa-list-ul"></i> <span>Menu</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="@Url.Action("Index","Rights")">
+                <i class="fa fa-hand-o-right"></i> <span>Rights</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="@Url.Action("Index","Chart")">
+                <i class="fa fa-pie-chart"></i> <span>Chart</span>
+            </a>
+        </li>
+
+        <li>
+            <a href="@Url.Action("Index","Accordion")">
+                <i class="fa fa-list-ul"></i> <span>Accordion</span>
+            </a>
+        </li>
+        <li>
+            <a href="@Url.Action("Index","Calendar")">
+                <i class="fa fa-list-ul"></i> <span>Calendar</span>
+            </a>
+        </li>*@
+        </ul>
+    </section>
+    <!-- /.sidebar -->
+</aside>
+
+@helper RenderChildMenu(List<MenuRoleMapperDTO> model, int ParentMenuId)
+{
+<ul class="treeview-menu">
+    @foreach (MenuRoleMapperDTO menuRoleMapperDTO in model.Where(x => x.ParentMenuId == ParentMenuId))
+    {
+        if (menuRoleMapperDTO.IsView == true)
+        {
+            if (ViewBag.CurrentPageRights != null && ViewBag.CurrentPageRights.MenuText == menuRoleMapperDTO.MenuText)
+            {
+                <li class="active">
+                    <a href="@menuRoleMapperDTO.MenuTargetPage">
+                        <i class="@menuRoleMapperDTO.MenuIcon"></i>@menuRoleMapperDTO.MenuText
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <a href="@menuRoleMapperDTO.MenuTargetPage">
+                        <i class="@menuRoleMapperDTO.MenuIcon"></i>@menuRoleMapperDTO.MenuText
+                    </a>
+                </li>
+            }
+
+        }
+    }
+
+</ul>
+}

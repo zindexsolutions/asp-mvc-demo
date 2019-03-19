@@ -1,0 +1,189 @@
+﻿
+@{
+    ViewBag.Title = "Rights";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm("Edit", "Rights", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="box box-primary">
+            <div class="box-header"></div>
+            <div class="box-body">
+                <div class="message-box"></div>
+
+                <div class="row">
+                    <div class="col-md-12" id="message">
+                    </div>
+                    <div class="col-md-12 col-sm-12 form-group">
+                        <div class="col-md-1 col-sm-1">
+                            @Html.Label("Role", htmlAttributes: new { @class = "control-label " })
+                        </div>
+                        <div class="col-md-4 col-sm-4">
+                            @Html.DropDownList("RoleId", ViewBag.Role as SelectList, "Please select role.", new { @class = "form-control", @id = "RoleId", @name = "RoleId" })
+                        </div>
+                        @*<div class="col-md-3 col-sm-3">
+                            <button type="button" class="btn btn-primary" id="SearchButton" name="SearchButton">Search</button>
+                        </div>*@
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-sm-5 col-sm-offset-2" id="ManageRights"></div>
+                    </div>
+                </div>
+
+                @if (ViewBag.CurrentPageRights.IsInsert != null && ViewBag.CurrentPageRights.IsInsert == true)
+                { 
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-md-3 col-xs-3">
+                                <button type="button" class="btn btn-primary pull-right" id="SubmitButton" name="SubmitButton">Submit</button>
+                            </div>
+                            <div class="col-md-3 col-xs-3">
+                                <button type="button" class="btn btn-danger" id="CancelButton" name="CancelButton">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+    </div>
+}
+
+@section ProjectScripts {
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            bind_events();
+        });
+
+        function bind_events() {
+            $("#RoleId").bind("change", function () { get_rights_list(); });
+            $("#SubmitButton").bind("click", function () { submit_rights(); });
+            $("#CancelButton").bind("click", function () { cancel_rights(); });
+        }
+
+        $('body').on('change', '.menu_insert, .menu_update, .menu_delete', function () {
+
+            if ($(this).is(':checked')) {
+                $(this).parent().parent().find('.menu_view').prop('checked', true)
+            }
+        });
+
+        function submit_rights() {
+            $.blockUI();
+
+            var roleId = $('#RoleId').val();
+
+            if (roleId == null || roleId == "") {
+                setTimeout(function () {
+                    jAlert("Please select role.", "Warning");
+                    $.unblockUI();
+                }, 500);
+            } else {
+                $.blockUI();
+
+                var rights_result = [];
+                $('.rights_row').each(function () {
+
+                    rights_result.push({
+                        MenuId: $(this).find('.menu_id').attr('name'),
+                        RoleId: roleId,
+                        IsInsert: $(this).children('.menu_row').find('.menu_insert').is(':checked') ? 1 : 0,
+                        IsUpdate: $(this).children('.menu_row').find('.menu_update').is(':checked') ? 1 : 0,
+                        IsDelete: $(this).children('.menu_row').find('.menu_delete').is(':checked') ? 1 : 0,
+                        IsView: $(this).children('.menu_row').find('.menu_view').is(':checked') ? 1 : 0
+                    });
+                });
+
+                if (rights_result.length>0) {
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("SaveRights","Rights")",
+                        data: JSON.stringify({
+                            MenuRoleMappers: rights_result,
+                            RoleId: roleId
+                        }),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (response) {
+                            $("#message").html('');
+                            
+                            if (response.result == 'success') {
+
+                                $("#message").html("<div class='alert alert-success alert-dismissible fade in'><button class='close' type='button' data-dismiss='alert' aria-hidden='true'>×</button><h4><i class='icon fa fa-check'></i>" + response.result + " </h4>" + response.success + "</div>");
+
+                                cancel_rights();
+                            } else {
+                                $("#message").html("<div class='alert alert-danger alert-dismissible fade in'><button class='close' type='button' data-dismiss='alert' aria-hidden='true'>×</button><h4><i class='icon fa fa-check'></i>" + response.result + "  </h4>" + response.success + "</div>");
+                            }
+
+                            setTimeout(function () {
+                                $.unblockUI();
+                            }, 1000);
+                        },
+                        failure: function (response) {
+                        },
+                        error: function (response) {
+                        }
+                    });
+                } else {
+                    $("#message").html("<div class='alert alert-danger alert-dismissible fade in'><button class='close' type='button' data-dismiss='alert' aria-hidden='true'>×</button><h4><i class='icon fa fa-check'></i> Error </h4>Sorry, there are not any menu rights added.</div>");
+                }
+
+                setTimeout(function () {
+                    $.unblockUI();
+                }, 1000);
+            }
+        }
+
+        function get_rights_list() {
+            $.blockUI();
+
+            var roleId = $('#RoleId').val();
+            
+            if (roleId == null || roleId=="") {
+                
+                setTimeout(function () {
+                    jAlert("Please select role.", "Warning");
+                    $.unblockUI();
+                }, 500);
+            } else {
+                
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("GetRightsList","Rights")",
+                    data: JSON.stringify({
+                        RoleId: roleId
+                    }),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "html",
+                    success: function (response) {
+                        
+                        $('#ManageRights').html("");
+                        $('#ManageRights').html(response);
+
+                        //$('#RoleId').attr("disabled", true);
+
+                        setTimeout(function () {
+                            $.unblockUI();
+                        }, 1000);
+                    },
+                    failure: function (response) {
+                    },
+                    error: function (response) {
+                    }
+                });
+            }
+        }
+
+        function cancel_rights() {
+            //$('#RoleId').attr("disabled", false);
+            $('#RoleId').val(null);
+            $('#ManageRights').html("");
+        }
+    </script>
+}

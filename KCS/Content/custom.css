@@ -1,0 +1,104 @@
+﻿.image-user-profile {
+    margin: 0 auto;
+    width: 150px;
+    padding: 3px;
+    border: 0px solid #d2d6de;
+    height: 150px;
+    object-fit: cover;
+}
+
+
+.image-user-profile-table {
+    margin: 0 auto;
+    width: 50px;
+    padding: 2px;    
+    height: 50px;
+    object-fit: cover;
+}
+
+
+.image-preview {
+    position: relative;
+    width: 150px;
+    padding: 3px;
+    border: 0px solid #d2d6de;
+    height: 150px;
+    margin:0 auto;
+}
+.image-preview img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.image-preview .remove-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -ms-border-radius: 50%;
+    -o-border-radius: 50%;
+    background: #000;
+    color: #ffffff;
+    height: 25px;
+    width: 25px;
+    text-align: center;
+  
+}
+
+    .image-preview .remove-btn i {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        -webkit-transform: translate(-50%,-50%);
+        -moz-transform: translate(-50%,-50%);
+        -ms-transform: translate(-50%,-50%);
+        -o-transform: translate(-50%,-50%);
+        margin-top: -1px;
+    }
+
+li.treeview.active > a span i {
+    transform: rotate(-90deg);
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+}
+
+li.treeview > a span i {
+    transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+}
+
+.sidebar-menu > li > a{
+    padding:12px !important;
+}
+
+
+
+.main-header .logo {
+    /*height: auto;*/
+    padding: 0 !important;
+}
+
+.main-header .logo img {
+    width: 100%;
+    /*height: 50px;*/
+    height: 100%;
+    object-fit: cover;
+    font-family: "object-fit:cover;";
+    display: inline-block;
+}
+
+
+    @media (max-width: 767px) {
+        .form-control{ margin:0 0 10px; }
+}
+
+@media (min-width: 569px) and (max-width: 767px) {}

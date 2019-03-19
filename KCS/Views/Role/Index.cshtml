@@ -1,0 +1,59 @@
+﻿@using KCS.DTOs
+@model IEnumerable<RoleDTO>
+
+@{
+    ViewBag.Title = "Role";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12" id="message">
+    </div>
+    @if (TempData["successMessage"] != null)
+    {
+        <div class="col-md-12 col-sm-12">
+            <div id="successMessage">
+                <div class='alert alert-success alert-dismissible fade in'>
+                    <button class='close' type='button' data-dismiss='alert' aria-hidden='true'>×</button>
+                    <h4><i class='icon fa fa-check'></i> Success </h4>@TempData["SuccessMessage"]
+                </div>
+
+            </div>
+        </div>
+    }
+
+    <div id="ViewRole"></div>
+</div>
+@section ProjectScripts {
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            get_role_list();
+        });
+
+        function get_role_list() {
+            $.blockUI();
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetRoleList","Role")",
+                data: null,
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function (response) {
+                    $('#ViewRole').html("");
+                    $('#ViewRole').html(response);
+
+                    setTimeout(function () {
+                        $.unblockUI();
+                    }, 1000);
+                },
+                failure: function (response) {
+                },
+                error: function (response) {
+                }
+            });
+        }
+    </script>
+}
+

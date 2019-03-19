@@ -1,0 +1,144 @@
+﻿
+@using KCS.DTOs
+@model IEnumerable<MenuDTO>
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+
+            <!-- /.box -->
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h3 class="box-title">Menu List</h3>
+                    @if (ViewBag.CurrentPageRights.IsInsert !=null && ViewBag.CurrentPageRights.IsInsert == true)
+                    {
+                        <div class="box-tools pull-right">
+                            <a href="@Url.Action("Add", "Menu")" class="btn bg-blue btn-xs" id="InsertMenuButton" name="InsertMenuButton"><i class="fa fa-plus"></i> &nbsp;  <span class="hide-on-mobile">Add</span></a>
+
+                        </div>
+                    }
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12">
+                            <table id="menuListDataTable" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Menu</th>
+                                        <th>Target Page</th>
+                                        <th>Parent Menu</th>
+                                        <th>Created on</th>
+                                        <th>Status</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (MenuDTO menuDTO in Model)
+                                    {
+                                        <tr>
+                                            <td>@menuDTO.MenuText</td>
+                                            <td>@menuDTO.MenuTargetPage</td>
+                                            <td>@menuDTO.ParentMenuName</td>
+                                            <td>@menuDTO.CreatedOn.ToShortDateString()</td>
+                                            <td>
+                                                @if (menuDTO.ActiveStatus == true)
+                                                {
+                                                    <i class="fa fa-check"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="fa fa-ban"></i>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (ViewBag.CurrentPageRights.IsUpdate != null && ViewBag.CurrentPageRights.IsUpdate == true)
+                                                {
+                                                    <i class="fa fa-edit"></i> @Html.ActionLink("Edit", "Edit", new { id = menuDTO.MenuId })
+                                                }
+
+                                                @if (ViewBag.CurrentPageRights.IsDelete != null && ViewBag.CurrentPageRights.IsDelete == true)
+                                                {
+                                                    <i class="fa fa-trash"></i> <a href="javascript:void(0)" name="@menuDTO.MenuId" class="delete_record">Delete</a>
+                                                }
+
+                                            </td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Menu</th>
+                                        <th>Target Page</th>
+                                        <th>Parent Menu</th>
+                                        <th>Created on</th>
+                                        <th>Status</th>
+                                        <th></th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+
+</section>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#menuListDataTable').dataTable({
+            'paging': true,
+            'bLengthChange': false,
+            'bFilter': true,
+            'ordering': true,
+            'bInfo': true,
+            'autoWidth': false
+        });
+
+
+        $('.delete_record').on('click', function () {
+            delete_record($(this).attr('name'));
+        })
+
+        function delete_record(Id) {
+
+            var confirmMessage = "Are you sure u want to remove this record ?";
+            jConfirm(confirmMessage, 'Confirm', function (r) {
+                if (r == true) {
+                    $.post("Menu/Delete", {
+                        Id: Id
+                    },
+                        function (response) {
+
+                            $("#message").html('');
+
+                            if (response.result == 'success') {                                
+                                $("#message").html("<div class='alert alert-success alert-dismissible fade in'><button class='close' type='button' data-dismiss='alert' aria-hidden='true'>×</button><h4><i class='icon fa fa-check'></i> " + response.result + " </h4>" + response.success + "</div>");
+
+                                get_menu_list();
+                            } else {
+                                $("#message").html("<div class='alert alert-danger alert-dismissible fade in'><button class='close' type='button' data-dismiss='alert' aria-hidden='true'>×</button><h4><i class='icon fa fa-check'></i> " + response.result + " </h4>" + response.success + "</div>");
+                            }
+
+
+                        });
+                }
+            });
+        }
+
+    });
+</script>
+
+
+

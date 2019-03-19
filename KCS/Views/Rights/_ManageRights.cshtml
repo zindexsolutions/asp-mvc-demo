@@ -1,0 +1,78 @@
+﻿
+@using KCS.DTOs
+@model IEnumerable<MenuRoleMapperDTO>
+
+<div class="row form-group">
+    <div class="col-md-12">
+        @foreach (MenuRoleMapperDTO menuRoleMapperDTO in Model)
+        {
+            if (menuRoleMapperDTO.ParentMenuId == null && Model.Where(x => x.ParentMenuId == menuRoleMapperDTO.MenuId).Count() > 0)
+            {
+                <div class="row" style="margin-left:0px;">
+                    <span><strong>@menuRoleMapperDTO.MenuText</strong></span>
+                </div>
+                <div>
+                    <ul>
+                        @Generate_Child_Menu(menuRoleMapperDTO.MenuId)
+                    </ul>
+                </div>
+            }
+
+            if (menuRoleMapperDTO.ParentMenuId == null && Model.Where(x => x.ParentMenuId == menuRoleMapperDTO.MenuId).Count() == 0)
+            {
+                @Generate_Menu(menuRoleMapperDTO)
+            }
+        }
+
+    </div>
+</div>
+
+@helper Generate_Child_Menu(int MenuId)
+{
+    <!-- Generate dynamic checkbox for submenu -->
+
+    foreach (MenuRoleMapperDTO ChildMenu in Model.Where(x => x.ParentMenuId == MenuId))
+    {
+        var IsInsert = ChildMenu.IsInsert == true ? "checked" : "";
+        var IsUpdate = ChildMenu.IsUpdate == true ? "checked" : "";
+        var IsDelete = ChildMenu.IsDelete == true ? "checked" : "";
+        var IsView = ChildMenu.IsView == true ? "checked" : "";
+
+        <li>
+            <div class="rights_row" style="margin-left:0px;">
+                <strong class="menu_id" name="@ChildMenu.MenuId">@ChildMenu.MenuText</strong>
+                <div class="menu_row" style="margin-left:50px;">
+
+                    <label class="checkbox-inline"><input class="menu_insert" type="checkbox" @IsInsert>Insert</label>
+                    <label class="checkbox-inline"><input class="menu_update" type="checkbox" @IsUpdate>Update</label>
+                    <label class="checkbox-inline"><input class="menu_delete" type="checkbox" @IsDelete>Delete</label>
+                    <label class="checkbox-inline"><input class="menu_view" type="checkbox" @IsView>View</label>
+                </div>
+            </div>
+        </li>
+    }
+
+    <!-- Generate dynamic checkbox for submenu -->
+}
+
+@helper Generate_Menu(MenuRoleMapperDTO MainMenu)
+{
+    <!-- Generate dynamic checkbox for menu which have no submenu and also don't child of anyone. -->
+
+    var IsInsert = MainMenu.IsInsert == true ? "checked" : "";
+    var IsUpdate = MainMenu.IsUpdate == true ? "checked" : "";
+    var IsDelete = MainMenu.IsDelete == true ? "checked" : "";
+    var IsView = MainMenu.IsView == true ? "checked" : "";
+
+    <div class="rights_row" style="margin-left:0px;">
+        <strong class="menu_id" name="@MainMenu.MenuId">@MainMenu.MenuText</strong>
+        <div class="menu_row" style="margin-left: 85px;">
+            <label class="checkbox-inline"><input class="menu_insert" type="checkbox" @IsInsert>Insert</label>
+            <label class="checkbox-inline"><input class="menu_update" type="checkbox" @IsUpdate>Update</label>
+            <label class="checkbox-inline"><input class="menu_delete" type="checkbox" @IsDelete>Delete</label>
+            <label class="checkbox-inline"><input class="menu_view" type="checkbox" @IsView>View</label>
+        </div>
+    </div>
+
+    <!-- Generate dynamic checkbox for menu which have no submenu and also don't child of anyone. -->
+}

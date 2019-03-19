@@ -1,0 +1,138 @@
+﻿@using KCS.Models
+@model Setting
+
+@{
+    ViewBag.Title = "Settings";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="col-md-12 col-sm-12">
+            <div id="successMessage">
+                <div class='alert alert-success alert-dismissible fade in'>
+                    <button class='close' type='button' data-dismiss='alert' aria-hidden='true'>×</button>
+                    <h4><i class='icon fa fa-check'></i> Success </h4>@TempData["SuccessMessage"]
+                </div>
+
+            </div>
+        </div>
+    }
+</div>
+
+@using (Html.BeginForm("Save", "Setting", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="box box-primary">
+            <div class="box-header"></div>
+            <div class="box-body">
+                <div class="message-box"></div>
+
+                <div class="row">
+                    <div class="col-md-9">
+                        <div class="row">
+
+                            <div class="col-md-4 form-group">
+                                <div class="col-md-4">
+                                    @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-12">
+                                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+
+                                    @Html.HiddenFor(model => model.SettingId)
+                                    @Html.Hidden("IsImageDeleted", false)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 form-group">
+                                <div class="col-md-4">
+                                    @Html.Label("Image", htmlAttributes: new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="image-preview">
+                                        @if (Model.Image != null)
+                                        {
+                                            var base64 = Convert.ToBase64String(Model.Image);
+                                            var LogoImage = string.Format("data:image/jpg;base64,{0}", base64);
+
+                                            <img src="@LogoImage " class="img-responsive" alt="Image Not Found" id="LogoImage" name="LogoImage" />
+                                            <a href="javascript:void(0)" class="remove-btn" id="RemoveImage"><i class="fa fa-times"></i></a>
+                                        }
+                                        else
+                                        {
+                                            <img src="~/Content/Image/default-logo.png" class="img-responsive" alt="Image Not Found" id="LogoImage" name="LogoImage" />
+                                            <a href="javascript:void(0)" class="remove-btn" id="RemoveImage" style="display:none;"><i class="fa fa-times"></i></a>
+                                        }
+                                    </div>
+
+                                    <div class="row text-center">
+                                        <div class="form-group">
+                                            <div class="btn btn-default btn-file">
+                                                <i class="fa fa-user"></i>&nbsp;&nbsp;Upload
+                                                <input type="file" name="LogoImagePath" id="LogoImagePath">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row  text-center">
+            <div class="form-group">
+                <div class="col-md-12">
+                    <button type="submit" value="Insert" class="btn btn-success btn-flat"><i class="fa fa-save"></i>&nbsp; Save</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section ProjectScripts {
+    <script>
+
+        $(function () {
+
+            $("#LogoImagePath").change(function () {
+                readURL(this);
+            });
+
+            $("#RemoveImage").click(function () {
+                remove_logo_image();
+            });
+        });
+
+        function remove_logo_image() {
+            $("#RemoveImage").val('');
+            $('#LogoImage').attr('src', '/Content/Image/default-logo.png');
+
+            $("#LogoImagePath").val(null);
+            $("#IsImageDeleted").val(true);
+            $('#RemoveImage').hide();
+        }
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+
+                    $('#LogoImage').attr('src', e.target.result);
+                    $('#RemoveImage').show();
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}

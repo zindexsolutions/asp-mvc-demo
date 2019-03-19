@@ -1,0 +1,106 @@
+﻿@*
+    This partial controls the top menu of the AdminLTE Template, being called automatically by _AdminLteLayout
+       TODO: All of the content in here is stand-in that must be replaced by the real behavior of your app
+*@
+
+
+@using KCS.Models;
+
+@using KCS.DTOs;
+
+@{
+    ViewBag.Layout = null;
+
+    UserDTO userDTO = new UserDTO();
+    if (ViewBag.UserInformation != null) {
+        userDTO = ViewBag.UserInformation;
+    }
+}
+
+<header class="main-header">
+    <!-- Logo -->
+    <a href="#" class="logo">
+        @if (ViewBag.Setting != null)
+        {
+            if (ViewBag.Setting.Image != null)
+            {
+                var base64 = Convert.ToBase64String(ViewBag.Setting.Image);
+                var UserProfileImage = string.Format("data:image/jpg;base64,{0}", base64);
+
+                <img src="@UserProfileImage" alt="Logo Image" />
+            }
+            else
+            {
+                <img src="~/Content/Image/default-logo.png" alt="Logo Image" />
+            }
+        }
+        else
+        {
+            <b>@Constants.ProjectName</b>
+        }
+
+
+    </a>
+
+    <!-- Header Navbar: style can be found in header.less -->
+    <nav class="navbar navbar-static-top" role="navigation">
+        <!-- Sidebar toggle button-->
+        <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+            <span class="sr-only">Toggle navigation</span>
+        </a>
+        <!-- Navbar Right Menu -->
+        <div class="navbar-custom-menu">
+            <ul class="nav navbar-nav">
+
+                <li class="dropdown user user-menu">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        @if (userDTO.ProfilePicture != null)
+                        {
+                            var base64 = Convert.ToBase64String(userDTO.ProfilePicture);
+                            var UserProfileImage = string.Format("data:image/jpg;base64,{0}", base64);
+
+                            <img src="@UserProfileImage" class="user-image" alt="User Image" />
+                        }
+                        else
+                        {
+                            <img src="~/Content/Image/default-image.png" class="user-image" alt="User Image" />
+                        }
+
+                        <span class="hidden-xs">@userDTO.Username</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <!-- User image -->
+                        <li class="user-header">
+                            @if (userDTO.ProfilePicture != null)
+                            {
+                                var base64 = Convert.ToBase64String(userDTO.ProfilePicture);
+                                var UserProfileImage = string.Format("data:image/jpg;base64,{0}", base64);
+
+                                <img src="@UserProfileImage" class="img-circle" alt="User Image" />
+                            }
+                            else
+                            {
+                                <img src="~/Content/Image/default-image.png" class="img-circle" alt="User Image" />
+                            }
+
+                            <p>
+                                @userDTO.Name - @userDTO.RoleName
+                                <small></small>
+                            </p>
+                        </li>
+
+                        <li class="user-footer">
+                            <div class="pull-left">
+                                <a href="@Url.Action("UserProfile","User", new { id = userDTO.UserId })" class="btn btn-default btn-flat">Profile</a>
+                                @*<a href="#" class="btn btn-default btn-flat">Profile</a>*@
+                            </div>
+                            <div class="pull-right">
+                                <a href="@Url.Action("Logout","Login")" class="btn btn-default btn-flat">Sign out</a>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>

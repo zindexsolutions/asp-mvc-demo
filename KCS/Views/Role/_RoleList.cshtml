@@ -1,0 +1,144 @@
+﻿
+@using KCS.DTOs
+@model IEnumerable<RoleDTO>
+
+<section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+
+            <!-- /.box -->
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h3 class="box-title">Role List</h3>
+                    @if (ViewBag.CurrentPageRights.IsInsert != null && ViewBag.CurrentPageRights.IsInsert == true)
+                    {
+                        <div class="box-tools pull-right">
+                            <a href="@Url.Action("Add", "Role")" class="btn bg-blue btn-xs" id="InsertRoleButton" name="InsertRoleButton"><i class="fa fa-plus"></i> &nbsp;  <span class="hide-on-mobile">Add</span> &nbsp; </a>
+
+                        </div>
+                    }
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12">
+                            <table id="roleListDataTable" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Role</th>
+                                        <th>Description</th>
+                                        <th>Created on</th>
+                                        <th>Status</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (RoleDTO roleDTO in Model)
+                                    {
+                                    <tr>
+                                        <td>@roleDTO.RoleName</td>
+                                        <td>@roleDTO.RoleDescription</td>
+                                        <td>@roleDTO.CreatedOn.ToShortDateString()</td>
+                                        <td>
+                                            @if (roleDTO.ActiveStatus == true)
+                                            {
+                                                <i class="fa fa-check"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="fa fa-ban"></i>
+                                            }
+                                        </td>                                        
+                                        <td>
+                                            @if (roleDTO.RoleId != 1)
+                                            {
+                                                if (ViewBag.CurrentPageRights.IsUpdate != null && ViewBag.CurrentPageRights.IsUpdate == true)
+                                                {
+                                                    <i class="fa fa-edit"></i> @Html.ActionLink("Edit", "Edit", new { id = roleDTO.RoleId })
+                                                }
+
+                                                if (ViewBag.CurrentPageRights.IsDelete != null && ViewBag.CurrentPageRights.IsDelete == true)
+                                                {
+                                                    if (roleDTO.RoleId != ViewBag.UserInformation.RoleId)
+                                                    {
+                                                        <i class="fa fa-trash"></i> <a href="javascript:void(0)" name="@roleDTO.RoleId" class="delete_record">Delete</a>
+                                                    }
+                                                }
+                                            }
+                                        </td>
+                                    </tr>
+                                    }
+
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Role</th>
+                                        <th>Description</th>
+                                        <th>Created on</th>
+                                        <th>Status</th>
+                                        <th></th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- /.box-body -->
+            </div>
+            <!-- /.box -->
+        </div>
+        <!-- /.col -->
+    </div>
+    <!-- /.row -->
+
+</section>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#roleListDataTable').dataTable({
+            'paging': true,
+            'bLengthChange': false,
+            'bFilter': true,
+            'ordering': true,
+            'bInfo': true,
+            'autoWidth': false
+        });
+
+        $('.delete_record').on('click', function () {
+            delete_record($(this).attr('name'));
+        })
+
+        function delete_record(Id) {
+
+            var confirmMessage = "Are you sure u want to remove this record ?";
+            jConfirm(confirmMessage, 'Confirm', function (r) {
+                if (r == true) {
+                    $.post("Role/Delete", {
+                        Id: Id
+                    },
+                        function (response) {
+
+                            $("#message").html('');
+
+                            if (response.result == 'success') {
+
+                                $("#message").html("<div class='alert alert-success alert-dismissible fade in'><button class='close' type='button' data-dismiss='alert' aria-hidden='true'>×</button><h4><i class='icon fa fa-check'></i> " + response.result +" </h4>" + response.success + "</div>");
+
+                                get_role_list();
+                            } else {
+                                $("#message").html("<div class='alert alert-danger alert-dismissible fade in'><button class='close' type='button' data-dismiss='alert' aria-hidden='true'>×</button><h4><i class='icon fa fa-check'></i> " + response.result +" </h4>" + response.success + "</div>");
+                            }
+
+
+                        });
+                }
+            });
+        }
+
+    });
+</script>
+

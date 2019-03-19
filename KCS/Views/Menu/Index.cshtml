@@ -1,0 +1,60 @@
+﻿@using KCS.DTOs
+@model IEnumerable<MenuDTO>
+
+@{
+    ViewBag.Title = "Menu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-md-12" id="message">
+    </div>
+    @if (TempData["successMessage"] != null)
+    {
+        <div class="col-md-12 col-sm-12">
+            <div id="successMessage">
+                <div class='alert alert-success alert-dismissible fade in'>
+                    <button class='close' type='button' data-dismiss='alert' aria-hidden='true'>×</button>
+                    <h4><i class='icon fa fa-check'></i> Success </h4>@TempData["SuccessMessage"]
+                </div>
+
+            </div>
+        </div>
+    }
+
+
+    <div id="ViewMenu"></div>
+</div>
+@section ProjectScripts {
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            get_menu_list();
+        });
+
+        function get_menu_list() {
+            $.blockUI();
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetMenuList","Menu")",
+                data: null,
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function (response) {
+                    $('#ViewMenu').html("");
+                    $('#ViewMenu').html(response);
+
+                    setTimeout(function () {
+                        $.unblockUI();
+                    }, 1000);
+                },
+                failure: function (response) {
+                },
+                error: function (response) {
+                }
+            });
+        }
+    </script>
+}
+

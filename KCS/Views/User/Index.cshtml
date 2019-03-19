@@ -1,0 +1,74 @@
+﻿
+@using KCS.DTOs
+@model IEnumerable<UserDTO>
+
+@{
+    ViewBag.Title = "User Management";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<button class="btn btn-default" id="SearchButton" name="SearchButton" style="display:none;">Search</button>
+
+<div class="row">
+    <div class="col-md-12" id="message">
+    </div>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="col-md-12 col-sm-12">
+            <div id="successMessage">
+                <div class='alert alert-success alert-dismissible fade in'>
+                    <button class='close' type='button' data-dismiss='alert' aria-hidden='true'>×</button>
+                    <h4><i class='icon fa fa-check'></i> Success </h4>@TempData["SuccessMessage"]
+                </div>
+
+            </div>
+        </div>
+    }
+
+
+    <div id="ViewUser"></div>
+</div>
+@section ProjectScripts {
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            bind_events();
+
+            $("#SearchButton").trigger('click');
+        });
+
+        function bind_events() {
+            $("#SearchButton").bind("click", function () {
+                get_user_list();
+            });
+        }
+
+        function get_user_list() {
+            $.blockUI();
+
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetUserList","User")",
+                data: null,
+                contentType: "application/json; charset=utf-8",
+                dataType: "html",
+                success: function (response) {
+
+                    $('#ViewUser').html("");
+                    $('#ViewUser').html(response);
+
+                    setTimeout(function () {
+                        $.unblockUI();
+                    }, 1000);
+                },
+                failure: function (response) {
+                },
+                error: function (response) {
+                }
+            });
+
+
+
+        }
+    </script>
+}

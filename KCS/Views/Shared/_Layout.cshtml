@@ -1,0 +1,84 @@
+﻿@*
+    This is the main dashboard layout that creates the AdminLTE look and feel
+       It includes all of the relevant CSS and Js in this project and across CDNs around the web for optimal load times
+       TODO: Use this layout in your views by either setting the "Layout" property
+       or changing your  _ViewStart.cshtml to use this layout
+*@
+@using KCS.Models;
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @*TODO: Change App name*@
+    <title>@ViewBag.Title</title>
+
+    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+    @*Source Sans Pro from Google Fonts*@
+    <link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic" rel="stylesheet" />
+    @*Bundle CSS, assuming includes Bootstrap CSS *@
+    @Styles.Render("~/Content/css")
+    <!-- Font Awesome Icons -->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <!-- Ionicons -->
+    <link href="http://code.ionicframework.com/ionicons/2.0.0/css/ionicons.min.css" rel="stylesheet" type="text/css" />
+    
+    <!-- Admin LTE -->
+    @Styles.Render("~/Content/adminlte")
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body class="skin-blue sidebar-mini">
+
+    <div class="wrapper">
+
+        @Html.Partial("_TopMenu")
+        <!-- Left side column. contains the logo and sidebar -->
+        @Html.Partial("_LeftMenu")
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <section class="content-header">
+                <h1>
+                    @ViewBag.Title
+                    <small>@ViewBag.TitleSmall</small>
+                </h1>
+                @Html.Partial("_Breadcrumb")
+            </section>
+            <!-- Main content -->
+            <section class="content">
+                @RenderBody()
+            </section><!-- /.content -->
+        </div><!-- /.content-wrapper -->
+        <footer class="main-footer">
+            <div class="pull-right hidden-xs">
+                @Html.Raw(Constants.CurrentVersion)
+            </div>
+            @Html.Raw(Constants.FooterText)
+
+        </footer>
+    </div><!-- ./wrapper -->
+    @* Bundles assume jquery 2.1.3 and Bootstrap 3 *@
+    @Scripts.Render("~/bundles/jquery")
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+    @Scripts.Render("~/bundles/bootstrap")
+
+    @Scripts.Render("~/bundles/adminltejs")
+
+    @Scripts.Render("~/bundles/customjs")
+
+    @RenderSection("scripts", required: false)
+
+    @RenderSection("ProjectScripts", required: false)
+</body>
+</html>

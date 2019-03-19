@@ -1,0 +1,111 @@
+﻿@using KCS.Models;
+@model User
+@{
+    ViewBag.Title = "Login";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>@ViewBag.Title</title>
+
+    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+    @*Source Sans Pro from Google Fonts*@
+    <link href="//fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic" rel="stylesheet" />
+    @*Bundle CSS, assuming includes Bootstrap CSS *@
+
+    @Styles.Render("~/Content/css")
+
+    <!-- Font Awesome Icons -->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <!-- Ionicons -->
+    <link href="http://code.ionicframework.com/ionicons/2.0.0/css/ionicons.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Admin LTE -->
+    @Styles.Render("~/Content/adminlte")
+   
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body class="hold-transition login-page">
+   
+   
+    <div class="login-box">
+        <div class="login-logo">
+            <b>KCS</b>
+        </div>
+        <!-- /.login-logo -->
+        <div class="login-box-body">
+            <p class="login-box-msg">Login to your account</p>
+
+            @if (ViewBag.IsError != null)
+            {
+                <div class="alert alert-danger alert-dismissible">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                    <h4><i class="icon fa fa-ban"></i> Error</h4>
+                    @Html.ValidationSummary(false, "")
+                </div>
+            }
+
+            @using (Html.BeginForm("Index", "Login", FormMethod.Post))
+            {
+
+                <div class="form-group has-feedback">
+                    @Html.TextBoxFor(x => x.Username, new { @class = "form-control", placeholder = "Username/Email", id = "UserName" })
+                    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    @* @Html.ValidationMessageFor(x => x.Username)*@
+                </div>
+                <div class="form-group has-feedback">
+
+                    @Html.PasswordFor(x => x.Password, new { @class = "form-control", placeholder = "Password", id = "Password" })
+                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                    @*@Html.ValidationMessageFor(x => x.Password)*@
+                </div>
+                <div class="row">
+
+                    <!-- /.col -->
+                    <div class="col-xs-12">
+                        <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+                    </div>
+                    <!-- /.col -->
+                </div>
+            }
+
+        </div>
+        <!-- /.login-box-body -->
+    </div>
+    <!-- /.login-box -->
+    <!-- jQuery 3 -->
+    <script src="../../bower_components/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap 3.3.7 -->
+    <script src="../../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- iCheck -->
+    <script src="../../plugins/iCheck/icheck.min.js"></script>
+    <script>
+        $(function () {
+            $('input').iCheck({
+                checkboxClass: 'icheckbox_square-blue',
+                radioClass: 'iradio_square-blue',
+                increaseArea: '20%' /* optional */
+            });
+        });
+    </script>
+
+
+
+    @* Bundles assume jquery 2.1.3 and Bootstrap 3 *@
+    @Scripts.Render("~/bundles/jquery")
+
+    @Scripts.Render("~/bundles/bootstrap")
+
+</body>
+</html>
